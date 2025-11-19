@@ -11,7 +11,6 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
-import { HeroParallaxDemo } from "./HeroParallaxDemo";
 import HeroSection from "./HeroSection";
 
 export function NavbarDemo() {
@@ -64,7 +63,7 @@ export function NavbarDemo() {
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-600 dark:text-neutral-300"
+                className="relative text-foreground hover:text-primary transition-colors"
               >
                 <span className="block">{item.name}</span>
               </a>
