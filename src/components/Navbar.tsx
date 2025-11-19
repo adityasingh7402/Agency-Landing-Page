@@ -11,7 +11,6 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
-import { HeroParallaxDemo } from "./HeroParallaxDemo";
 import HeroSection from "./HeroSection";
 
 export function NavbarDemo() {
