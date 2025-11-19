@@ -8,10 +8,10 @@ function HeroSection() {
 
         <div className='flex items-center justify-end relative max-h-screen overflow-hidden mask-b-from-30%'>
             <div className='z-10 absolute sm:left-20'>
-                <h1 className="text-2xl md:text-7xl text-white dark:text-white bg-transparent bg-clip-text">
+                <h1 className="text-2xl md:text-7xl text-foreground bg-transparent bg-clip-text">
                     The Ultimate <br /> <span className='italic'>development</span> studio
                 </h1>
-                <p className="max-w-2xl text-base md:text-xl mt-8 text-neutral-200 dark:text-neutral-200">
+                <p className="max-w-2xl text-base md:text-xl mt-8 text-muted-foreground">
                     We build beautiful products with the latest technologies and frameworks.
                     We are a team of passionate developers and designers that love to build
                     amazing products.
