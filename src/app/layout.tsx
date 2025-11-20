@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LenisProvider from "@/components/LenisProvider";
 import { ThemeProvider } from "@/context/ThemeContext";
+import BlobCursor from "@/components/ui/BlobCursor";
+import ClickSpark from "@/components/ui/ClickSpark";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +32,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
+          <BlobCursor
+            opacity={0.5}
+            size={40}
+          />
+          <ClickSpark
+            sparkSize={10}
+            sparkCount={8}
+            sparkRadius={15}
+            duration={400}
+            extraScale={1}
+          />
           <LenisProvider>{children}</LenisProvider>
         </ThemeProvider>
       </body>
