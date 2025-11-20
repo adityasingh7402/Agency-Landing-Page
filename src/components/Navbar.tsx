@@ -9,6 +9,7 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
+  MobileNavOverlay,
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
 import HeroSection from "./HeroSection";
@@ -33,6 +34,12 @@ export function NavbarDemo() {
 
   return (
     <div className="relative w-full">
+      {/* Overlay for mobile menu */}
+      <MobileNavOverlay
+        isOpen={isMobileMenuOpen}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
@@ -98,7 +105,7 @@ const DummyContent = () => {
   return (
     <div className="p-8 pt-12">
       <HeroSection />
-      
+
     </div>
   );
 };
