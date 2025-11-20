@@ -103,7 +103,7 @@ export function NavbarDemo() {
 
 const DummyContent = () => {
   return (
-    <div className="p-8 pt-12">
+    <div className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-12 md:pb-16">
       <HeroSection />
 
     </div>
