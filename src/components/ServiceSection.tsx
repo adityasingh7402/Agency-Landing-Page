@@ -34,7 +34,11 @@ function ServiceSection() {
 
             <motion.div className='flex flex-row gap-10'>
             
-                <motion.div className='w-1/2'>
+                <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9 }}
+                className='w-1/2'>
                 {servicesData.map((item,idx) => (
                         <motion.div key={item.id} className='flex flex-col bg-card mb-5 w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 p-4 sm:p-5 md:p-6 mx-2'>
                             
@@ -81,7 +85,11 @@ function ServiceSection() {
                 ))}
                 </motion.div>
 
-                <motion.div className='w-1/2 bg-white/50 rounded-xl p-3 h-[600px]'>
+                <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9 }}
+                className='w-1/2 bg-white/50 rounded-xl p-3 h-[600px]'>
                     <motion.div className='flex items-center justify-center h-full'>
                         <motion.img
                             key={expandedService}
