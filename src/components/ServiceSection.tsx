@@ -86,8 +86,8 @@ function ServiceSection() {
                 </motion.div>
 
                 <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.9 }}
                 className='w-1/2 bg-white/50 rounded-xl p-3 h-[600px]'>
                     <motion.div className='flex items-center justify-center h-full'>

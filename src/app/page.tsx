@@ -4,6 +4,10 @@ import { ProjectsSection } from "@/components/ProjectsSection";
 import ServiceSection from "@/components/ServiceSection";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import Image from "next/image";
+import TimelineSection from "@/components/TimelineSection";
+import Testimonials from "@/components/Testimonials";
+import Footer from "@/components/Footer";
+import FAQSection from "@/components/FAQSection";
 
 export default function Home() {
   return (
@@ -13,6 +17,10 @@ export default function Home() {
       <ThemeSwitcher />
       <ServiceSection />
       <ProjectsSection />
+      <TimelineSection />
+      <Testimonials />
+      <FAQSection />
+      <Footer />
     </div>
   );
 }
