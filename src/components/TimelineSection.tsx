@@ -8,35 +8,35 @@ import { timelineData } from '@/constants/TimelineData'
 
 function TimelineSection() {
     const ref = useRef<HTMLDivElement>(null);
-const containerRef = useRef<HTMLDivElement>(null);
-const [height, setHeight] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [height, setHeight] = useState(0);
 
-useEffect(() => {
-  if (ref.current) {
-    const rect = ref.current.getBoundingClientRect();
-    setHeight(rect.height);
-  }
-}, [ref]);
+    useEffect(() => {
+        if (ref.current) {
+            const rect = ref.current.getBoundingClientRect();
+            setHeight(rect.height);
+        }
+    }, [ref]);
 
-const { scrollYProgress } = useScroll({
-  target: containerRef,
-  offset: ["start 10%", "end 50%"],
-});
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start 10%", "end 50%"],
+    });
 
-const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
-const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+    const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
+    const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
 
     return (
-        <div className='flex flex-row container mx-auto gap-10'>
-        <div className='w-1/2 flex items-center justify-center'>
-            <motion.span className='text-muted-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight'>
-                Here's, <br className='hidden sm:block' />
-                <motion.span className='text-foreground'>How we launch your project.</motion.span>
-            </motion.span>
+        <div className='flex flex-col lg:flex-row container mx-auto gap-6 lg:gap-10 px-4 sm:px-6 md:px-8'>
+            <div className='w-full lg:w-1/2 flex items-center justify-center mb-8 lg:mb-0'>
+                <motion.span className='text-muted-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-center lg:text-left'>
+                    Here's, <br className='hidden sm:block' />
+                    <motion.span className='text-foreground'>How we launch your project.</motion.span>
+                </motion.span>
 
-        </div>
-        {/* <div className=' w-1/2'>
+            </div>
+            {/* <div className=' w-1/2'>
         <div className='w-full flex flex-col items-start justify-start'>
             <div className="relative">
                 
@@ -72,49 +72,49 @@ const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
             </div>
         </div>
         </div> */}
-        <div className='w-1/2' ref={containerRef}>
-            <div className='w-full flex flex-col items-start justify-start'>
-                <div className="relative" ref={ref}>
-                {/* Static background line */}
-                <div 
-                    className="absolute left-6 top-0 w-[2px] bg-gradient-to-b from-transparent via-gray-300 to-transparent"
-                    style={{ height: height + "px" }}
-                >
-                    {/* Animated line that grows on scroll */}
-                    <motion.div
-                    style={{
-                        height: heightTransform,
-                        opacity: opacityTransform,
-                    }}
-                    className="absolute inset-x-0 top-0 w-[2px] bg-red-600 rounded-full"
-                    />
-                </div>
-                
-                <ul className="space-y-1">
-                    {timelineData.map((item, index) => (
-                    <motion.li
-                    initial={{ opacity: 0, y: 100 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    viewport={{ once: true, amount: 0.8 }}
-                    key={index} className="relative flex items-start gap-2 pt-10 min-h-[60vh]">
-                        {/* Icon */}
-                        <div className="relative z-10 flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                        <div className="h-4 w-4 rounded-full bg-neutral-200 border border-border p-2" />
+            <div className='w-full lg:w-1/2' ref={containerRef}>
+                <div className='w-full flex flex-col items-start justify-start'>
+                    <div className="relative" ref={ref}>
+                        {/* Static background line */}
+                        <div
+                            className="absolute left-6 top-0 w-[2px] bg-gradient-to-b from-transparent via-gray-300 to-transparent"
+                            style={{ height: height + "px" }}
+                        >
+                            {/* Animated line that grows on scroll */}
+                            <motion.div
+                                style={{
+                                    height: heightTransform,
+                                    opacity: opacityTransform,
+                                }}
+                                className="absolute inset-x-0 top-0 w-[2px] bg-red-600 rounded-full"
+                            />
                         </div>
-                        
-                        {/* Content */}
-                        <div className="relative flex-1 w-[600px] h-[200px] bg-card rounded-xl border border-border p-4">
-                        <div className="text-4xl text-primary mt-1">{item.title}</div>
-                        <p className="mt-2 text-lg text-muted-foreground">{item.description}</p>
-                        </div>
-                    </motion.li>
-                    ))}
-                </ul>
+
+                        <ul className="space-y-1">
+                            {timelineData.map((item, index) => (
+                                <motion.li
+                                    initial={{ opacity: 0, y: 100 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, ease: "easeOut" }}
+                                    viewport={{ once: true, amount: 0.8 }}
+                                    key={index} className="relative flex items-start gap-2 pt-10 min-h-[40vh] sm:min-h-[50vh] lg:min-h-[60vh]">
+                                    {/* Icon */}
+                                    <div className="relative z-10 shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center">
+                                        <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-neutral-200 border border-border p-2" />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="relative flex-1 w-full max-w-full sm:max-w-[500px] lg:max-w-[600px] h-auto min-h-[150px] sm:min-h-[180px] lg:h-[200px] bg-card rounded-xl border border-border p-4 sm:p-6">
+                                        <div className="text-2xl sm:text-3xl lg:text-4xl text-primary mt-1">{item.title}</div>
+                                        <p className="mt-2 text-base sm:text-lg text-muted-foreground">{item.description}</p>
+                                    </div>
+                                </motion.li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        
+
         </div>
     )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { servicesData } from '@/constants/ServiceData'
 import Image from 'next/image'
@@ -16,13 +16,13 @@ function ServiceSection() {
                 <p className='text-foreground text-sm sm:text-base font-medium mb-2 sm:mb-3'>Services</p>
             </motion.div>
 
-            <motion.div className='flex flex-row justify-between items-center'>
+            <motion.div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
                 <motion.span className='text-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight'>
                     From idea to scale. <br className='hidden sm:block' />
                     <motion.span className='text-muted-foreground'>We master our craft.</motion.span>
                 </motion.span>
 
-                <motion.button>
+                <motion.button className='hidden md:block'>
                     <motion.span className='text-primary text-lg sm:text-xl font-medium bg-primary/10 backdrop-blur-xl shadow-3xl transition-all duration-300 cursor-pointer px-8 py-3 border-2 border-border rounded-full hover:bg-primary/10'>
                         Start a Project
                         <IconArrowBarRight className='inline-block w-6 h-6 ml-4 -mt-1' />
@@ -32,23 +32,23 @@ function ServiceSection() {
 
             </motion.div>
 
-            <motion.div className='flex flex-row gap-10'>
-            
+            <motion.div className='flex flex-col lg:flex-row gap-6 lg:gap-10'>
+
                 <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.9 }}
-                className='w-1/2'>
-                {servicesData.map((item,idx) => (
-                        <motion.div key={item.id} className='flex flex-col bg-card mb-5 w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 p-4 sm:p-5 md:p-6 mx-2'>
-                            
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.9 }}
+                    className='w-full lg:w-1/2'>
+                    {servicesData.map((item, idx) => (
+                        <motion.div key={item.id} className='flex flex-col bg-card mb-5 w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 p-4 sm:p-5 md:p-6 mx-0 sm:mx-2'>
+
                             <motion.div className=''>
-                                <motion.div className='flex flex-row items-center justify-between w-full gap-4'>
-                                    <motion.section className='flex flex-row justify-between w-full gap-4'>
+                                <motion.div className='flex flex-row items-center justify-between w-full gap-2 sm:gap-4'>
+                                    <motion.section className='flex flex-row justify-between w-full gap-2 sm:gap-4'>
                                         <div className='flex flex-col'>
-                                            <div className='flex flex-row items-center gap-4'>
-                                                <div>{item.svg}</div>
-                                                <p className='text-foreground text-xl sm:text-2xl md:text-3xl font-light'>{item.title}</p>
+                                            <div className='flex flex-row items-center gap-2 sm:gap-4'>
+                                                <div className='shrink-0'>{item.svg}</div>
+                                                <p className='text-foreground text-lg sm:text-xl md:text-2xl lg:text-3xl font-light'>{item.title}</p>
                                             </div>
                                             <AnimatePresence>
                                                 {expandedService === item.id && (
@@ -60,36 +60,36 @@ function ServiceSection() {
                                                         className='overflow-hidden'
                                                     >
                                                         <motion.div className='pt-4'>
-                                                            <p className='text-muted-foreground text-lg sm:text-xl md:text-2xl pl-10'>{item.description}</p>
+                                                            <p className='text-muted-foreground text-base sm:text-lg md:text-xl lg:text-2xl pl-6 sm:pl-10'>{item.description}</p>
                                                         </motion.div>
                                                     </motion.div>
                                                 )}
                                             </AnimatePresence>
                                         </div>
-                                        <div>
+                                        <div className='shrink-0'>
                                             <button
-                                            onClick={() => setExpandedService(expandedService === item.id ? null : item.id)}
-                                            className='p-2 rounded-full hover:bg-accent/20 transition-colors duration-300'
-                                            aria-label={expandedService === item.id ? 'Collapse service details' : 'Expand service details'}
+                                                onClick={() => setExpandedService(expandedService === item.id ? null : item.id)}
+                                                className='p-2 rounded-full hover:bg-accent/20 transition-colors duration-300'
+                                                aria-label={expandedService === item.id ? 'Collapse service details' : 'Expand service details'}
                                             >
-                                            <IconChevronDown
-                                                className={`w-6 h-6 text-foreground transition-transform duration-300 ${expandedService === item.id ? 'transform rotate-180' : ''}`}
-                                            />
+                                                <IconChevronDown
+                                                    className={`w-5 h-5 sm:w-6 sm:h-6 text-foreground transition-transform duration-300 ${expandedService === item.id ? 'transform rotate-180' : ''}`}
+                                                />
                                             </button>
                                         </div>
                                     </motion.section>
                                 </motion.div>
                             </motion.div>
-                            
+
                         </motion.div>
-                ))}
+                    ))}
                 </motion.div>
 
                 <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.9 }}
-                className='w-1/2 bg-white/50 rounded-xl p-3 h-[600px]'>
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.9 }}
+                    className='hidden lg:block w-full lg:w-1/2 bg-white/50 rounded-xl p-3 h-[400px] lg:h-[600px]'>
                     <motion.div className='flex items-center justify-center h-full'>
                         <motion.img
                             key={expandedService}
