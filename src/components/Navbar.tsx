@@ -21,6 +21,10 @@ export function NavbarDemo() {
       link: "#features",
     },
     {
+      name: "Blog",
+      link: "/blog",
+    },
+    {
       name: "Pricing",
       link: "#pricing",
     },
@@ -94,21 +98,8 @@ export function NavbarDemo() {
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
-      <DummyContent />
-
-      {/* Navbar */}
     </div>
   );
 }
-
-const DummyContent = () => {
-  return (
-    <div className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-12 md:pb-16">
-      <HeroSection />
-
-    </div>
-  );
-};
-
 
 export default NavbarDemo;
