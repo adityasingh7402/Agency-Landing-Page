@@ -376,7 +376,7 @@ export default function CreateBlogPage() {
                 automatic_uploads: true,
                 // file_picker_types: 'image',
                 file_picker_types: 'file',
-                file_picker_callback: (callback, value, meta) => {
+                file_picker_callback: (callback: (url: string, meta?: Record<string, any>) => void, value: string, meta: Record<string, any>) => {
                 // Create file input
                 const input = document.createElement('input');
                 input.setAttribute('type', 'file');
