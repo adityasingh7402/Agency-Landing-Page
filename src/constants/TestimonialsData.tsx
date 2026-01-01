@@ -7,7 +7,7 @@ export const testimonialsData = [
         </div>,
 
         description: "Working with DesignLab has transformed our online presence. Their innovative designs and user-centric approach led to a 2.3x increase in our conversion rates within just three months.",
-        image: "/path/to/image.jpg",
+        image: "/vercel.svg",
         name: "Jane Doe",
         position: "Marketing Director, TechCorp"
     },
@@ -19,7 +19,7 @@ export const testimonialsData = [
         </div>,
 
         description: "The team at DesignLab exceeded our expectations. Their strategic design solutions resulted in a remarkable 150% growth in user engagement on our platform.",
-        image: "/path/to/image2.jpg",
+        image: "/vercel.svg",
         name: "John Smith",
         position: "Product Manager, InnovateX"  
     },
@@ -31,7 +31,7 @@ export const testimonialsData = [
         </div>,
 
         description: "DesignLab's dedication to excellence is unparalleled. Their collaborative approach and attention to detail have earned them a 98% client satisfaction rate in our industry.",
-        image: "/path/to/image3.jpg",
+        image: "/vercel.svg",
         name: "Emily Johnson",
         position: "CEO, CreativeSolutions"
     },
@@ -43,7 +43,7 @@ export const testimonialsData = [
         </div>,
 
         description: "Thanks to DesignLab's innovative design strategies, we experienced a significant 45% reduction in our website's bounce rate, leading to longer visitor sessions and higher engagement.",
-        image: "/path/to/image4.jpg",
+        image: "/vercel.svg",
         name: "Michael Brown",
         position: "Head of Digital, MarketMakers"
     }
