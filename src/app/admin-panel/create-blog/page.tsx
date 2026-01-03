@@ -15,12 +15,12 @@ import { useRouter } from 'next/navigation';
 export default function CreateBlogPage() {
   const router = useRouter();
   const editorRef = useRef<any>(null);
-  
+
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [contentType, setContentType] = useState<'html' | 'mdx'>('html');
-  
+
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -43,8 +43,10 @@ export default function CreateBlogPage() {
     twitterCreator: '@your_twitter'
   });
 
-  // Fetch categories on mount
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     fetchCategories();
   }, []);
 
@@ -75,548 +77,377 @@ export default function CreateBlogPage() {
     }
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-    
-  //   if (!editorRef.current) {
-  //     alert('Editor not initialized');
-  //     return;
-  //   }
-
-  //   const content = editorRef.current.getContent();
-    
-  //   if (!thumbnailFile) {
-  //     alert('Please upload a thumbnail');
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   try {
-  //     const formDataToSend = new FormData();
-      
-  //     // Append all form fields
-  //     Object.entries(formData).forEach(([key, value]) => {
-  //       formDataToSend.append(key, value.toString());
-  //     });
-      
-  //     formDataToSend.append('content', content);
-  //     formDataToSend.append('thumbnail', thumbnailFile);
-
-  //     const res = await fetch('/api/upload-blog', {
-  //       method: 'POST',
-  //       body: formDataToSend
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (data.success) {
-  //       alert('Blog created successfully!');
-  //       router.push('/admin-panel/blogs');
-  //     } else {
-  //       alert(data.message || 'Failed to create blog');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error creating blog:', error);
-  //     alert('An error occurred while creating the blog');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  // Get content based on contentType
-  let content = '';
-  if (contentType === 'html') {
-    if (!editorRef.current) {
-      alert('Editor not initialized');
+    e.preventDefault();
+
+    let content = '';
+    if (contentType === 'html') {
+      if (!editorRef.current) {
+        alert('Editor not initialized');
+        return;
+      }
+      content = editorRef.current.getContent();
+    } else {
+      content = formData.content;
+    }
+
+    if (!content || content.trim() === '') {
+      alert('Please add some content');
       return;
     }
-    content = editorRef.current.getContent();
-  } else {
-    // For MDX, content is already in formData
-    content = formData.content;
-  }
-  
-  if (!content || content.trim() === '') {
-    alert('Please add some content');
-    return;
-  }
-  
-  if (!thumbnailFile) {
-    alert('Please upload a thumbnail');
-    return;
-  }
 
-  setLoading(true);
-
-  try {
-    const formDataToSend = new FormData();
-    
-    // Append all form fields (this includes contentType automatically)
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value.toString());
-    });
-    
-    // Override content with the correct content (from editor or textarea)
-    formDataToSend.set('content', content);
-    formDataToSend.append('thumbnail', thumbnailFile);
-
-    const res = await fetch('/api/upload-blog', {
-      method: 'POST',
-      body: formDataToSend
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert('Blog created successfully!');
-      router.push('/admin-panel/blogs');
-    } else {
-      alert(data.message || 'Failed to create blog');
+    if (!thumbnailFile) {
+      alert('Please upload a thumbnail');
+      return;
     }
-  } catch (error) {
-    console.error('Error creating blog:', error);
-    alert('An error occurred while creating the blog');
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setLoading(true);
+
+    try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value.toString());
+      });
+      formDataToSend.set('content', content);
+      formDataToSend.append('thumbnail', thumbnailFile);
+
+      const res = await fetch('/api/upload-blog', {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('Blog created successfully!');
+        router.push('/admin-panel/blogs');
+      } else {
+        alert(data.message || 'Failed to create blog');
+      }
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      alert('An error occurred while creating the blog');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isMounted) return null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Create New Blog</h1>
-        <p className="text-gray-500 mt-2">Write and publish your blog post</p>
-      </div>
+    <div className="max-w-screen-2xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+            Create New Blog
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Draft your masterpiece and optimize it for the web.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-            <CardDescription>Essential details about your blog post</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="Enter blog title"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="slug">Slug *</Label>
-              <Input
-                id="slug"
-                name="slug"
-                value={formData.slug}
-                onChange={handleInputChange}
-                placeholder="enter-blog-slug"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">URL-friendly version of the title</p>
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Brief description of your blog"
-                rows={3}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="categoryId">Category *</Label>
-              <Select 
-                value={formData.categoryId} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="author">Author *</Label>
-              <Input
-                id="author"
-                name="author"
-                value={formData.author}
-                onChange={handleInputChange}
-                placeholder="Author name"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tags">Tags</Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleInputChange}
-                placeholder="react, nextjs, javascript (comma separated)"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="thumbnail">Thumbnail Image *</Label>
-              <Input
-                id="thumbnail"
-                type="file"
-                accept="image/*"
-                onChange={handleThumbnailChange}
-                required
-              />
-            </div>
-
-            <div className="flex items-center gap-6">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isPublished"
-                  checked={formData.isPublished}
-                  onCheckedChange={(checked) => handleSwitchChange('isPublished', checked)}
-                />
-                <Label htmlFor="isPublished">Publish immediately</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="isFeatured"
-                  checked={formData.isFeatured}
-                  onCheckedChange={(checked) => handleSwitchChange('isFeatured', checked)}
-                />
-                <Label htmlFor="isFeatured">Featured post</Label>
-              </div>
-            </div>
-          </CardContent>
-
-        </Card>
-
-        {/* Content Editor */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Content</CardTitle>
-            <CardDescription>Write your blog content with rich formatting and code snippets</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-6">
-              <Label htmlFor="contentType">Content Type *</Label>
-              <Select 
-                value={contentType} 
-                onValueChange={(value: 'html' | 'mdx') => {
-                  setContentType(value);
-                  setFormData(prev => ({ ...prev, contentType: value }));
-                }}
-              >
-                <SelectTrigger id="contentType">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="html">
-                    <div className="flex flex-col">
-                      <span className="font-medium">Rich Text Editor (TinyMCE)</span>
-                      <span className="text-xs text-gray-500">For standard blog posts</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="mdx">
-                    <div className="flex flex-col">
-                      <span className="font-medium">MDX Editor (Interactive)</span>
-                      <span className="text-xs text-gray-500">For interactive demos and components</span>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-sm text-gray-500 mt-2">
-                {contentType === 'html' 
-                  ? '📝 Use the visual editor for standard blog posts with images and formatting'
-                  : '⚡ Use MDX for interactive demos, live code examples, and custom components'
-                }
-              </p>
-            </div>
-            {contentType === 'html' ? (
-            <Editor
-              apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
-              onInit={(evt, editor) => (editorRef.current = editor)}
-              init={{
-                height: 500,
-                menubar: true,
-                plugins: [
-                  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                  'insertdatetime', 'media', 'table', 'codesample', 'help', 'wordcount'
-                ],
-                toolbar: 'undo redo | blocks | ' +
-                  'bold italic forecolor | alignleft aligncenter ' +
-                  'alignright alignjustify | bullist numlist outdent indent | ' +
-                  'removeformat | image media link | codesample code | help',
-                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                images_upload_url: '/api/imagekit-auth',
-                automatic_uploads: true,
-                // file_picker_types: 'image',
-                file_picker_types: 'file',
-                file_picker_callback: (callback: (url: string, meta?: Record<string, any>) => void, value: string, meta: Record<string, any>) => {
-                // Create file input
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                
-                // Set accepted file types based on what's being inserted
-                if (meta.filetype === 'image') {
-                  input.setAttribute('accept', 'image/*');
-                } else if (meta.filetype === 'media') {
-                  input.setAttribute('accept', 'video/mp4,image/gif');
-                } else {
-                  input.setAttribute('accept', 'image/*,video/mp4,image/gif');
-                }
-
-                // Handle file selection
-                input.onchange = async function() {
-                  const file = (this as HTMLInputElement).files?.[0];
-                  if (!file) return;
-
-                  // Determine if it's a video/gif or image
-                  const isVideo = file.type === 'video/mp4' || file.type === 'image/gif';
-                  
-                  // Upload to appropriate endpoint
-                  const uploadUrl = isVideo ? '/api/upload-video' : '/api/imagekit-auth';
-                  
-                  try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    const response = await fetch(uploadUrl, {
-                      method: 'POST',
-                      body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success || data.location) {
-                      // Return the URL to TinyMCE
-                      callback(data.location || data.url, { 
-                        alt: file.name,
-                        title: file.name 
-                      });
-                    } else {
-                      alert(data.message || 'Upload failed');
-                    }
-                  } catch (error) {
-                    console.error('Upload error:', error);
-                    alert('Failed to upload file');
-                  }
-                };
-
-                // Trigger file selection
-                input.click();
-              },
-                codesample_languages: [
-                  { text: 'JavaScript', value: 'javascript' },
-                  { text: 'TypeScript', value: 'typescript' },
-                  { text: 'HTML/XML', value: 'markup' },
-                  { text: 'CSS', value: 'css' },
-                  { text: 'Python', value: 'python' },
-                  { text: 'Java', value: 'java' },
-                  { text: 'C#', value: 'csharp' },
-                  { text: 'PHP', value: 'php' },
-                  { text: 'Ruby', value: 'ruby' },
-                  { text: 'Go', value: 'go' },
-                ]
-              }}
-            />
-            ) : (
-              <div>
-                <textarea
-                  value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                  className="w-full h-[500px] p-4 font-mono text-sm border rounded-md focus:ring-2 focus:ring-blue-500"
-                  placeholder="# Your MDX content here
-
-                  Write in markdown with React components!
-
-                  Example:
-                  ## Interactive Color Picker
-                  <ColorPicker initialColor='#3b82f6' />
-
-                  ## Regular Content
-                  You can mix regular markdown with interactive components."
-                      />
-                      <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-                        <h4 className="font-semibold text-blue-900 mb-2">📚 Available Interactive Components (Coming Soon):</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm text-blue-800 font-mono">
-                          <span>&lt;ColorPicker /&gt;</span>
-                          <span>&lt;MarginDemo /&gt;</span>
-                          <span>&lt;PaddingVisualizer /&gt;</span>
-                          <span>&lt;FlexboxPlayground /&gt;</span>
-                          <span>&lt;GridGenerator /&gt;</span>
-                          <span>&lt;CSSAnimator /&gt;</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-        {/* SEO Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>SEO Settings</CardTitle>
-            <CardDescription>Optimize your blog for search engines</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="metaTitle">Meta Title</Label>
-              <Input
-                id="metaTitle"
-                name="metaTitle"
-                value={formData.metaTitle}
-                onChange={handleInputChange}
-                placeholder="Leave empty to use blog title"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="metaDescription">Meta Description</Label>
-              <Textarea
-                id="metaDescription"
-                name="metaDescription"
-                value={formData.metaDescription}
-                onChange={handleInputChange}
-                placeholder="SEO-friendly description (160 characters)"
-                rows={2}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="metaKeywords">Meta Keywords</Label>
-              <Input
-                id="metaKeywords"
-                name="metaKeywords"
-                value={formData.metaKeywords}
-                onChange={handleInputChange}
-                placeholder="keyword1, keyword2, keyword3"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="canonicalUrl">Canonical URL</Label>
-              <Input
-                id="canonicalUrl"
-                name="canonicalUrl"
-                value={formData.canonicalUrl}
-                onChange={handleInputChange}
-                placeholder="https://yoursite.com/blog/slug (optional)"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Social Media Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Social Media</CardTitle>
-            <CardDescription>Configure Open Graph and Twitter card settings</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="ogTitle">Open Graph Title</Label>
-              <Input
-                id="ogTitle"
-                name="ogTitle"
-                value={formData.ogTitle}
-                onChange={handleInputChange}
-                placeholder="Leave empty to use blog title"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="ogDescription">Open Graph Description</Label>
-              <Textarea
-                id="ogDescription"
-                name="ogDescription"
-                value={formData.ogDescription}
-                onChange={handleInputChange}
-                placeholder="Description for social media shares"
-                rows={2}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="twitterTitle">Twitter Title</Label>
-              <Input
-                id="twitterTitle"
-                name="twitterTitle"
-                value={formData.twitterTitle}
-                onChange={handleInputChange}
-                placeholder="Leave empty to use blog title"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="twitterDescription">Twitter Description</Label>
-              <Textarea
-                id="twitterDescription"
-                name="twitterDescription"
-                value={formData.twitterDescription}
-                onChange={handleInputChange}
-                placeholder="Description for Twitter card"
-                rows={2}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="twitterCreator">Twitter Creator</Label>
-              <Input
-                id="twitterCreator"
-                name="twitterCreator"
-                value={formData.twitterCreator}
-                onChange={handleInputChange}
-                placeholder="@your_twitter"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Submit Button */}
-        <div className="flex justify-end gap-4">
+        <div className="flex items-center gap-3">
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push('/admin-panel')}
+            className="rounded-xl px-6"
+            onClick={() => router.push('/admin-panel/blogs')}
             disabled={loading}
           >
-            Cancel
+            Discard
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="rounded-xl px-8 bg-foreground text-background font-bold hover:scale-105 transition-transform"
+          >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
+                Saving...
               </>
             ) : (
-              'Create Blog'
+              'Publish Post'
             )}
           </Button>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Editor (Main Content) */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Content Editor */}
+          <Card className="glass-card border-none shadow-sm ring-1 ring-border/50 overflow-hidden">
+            <CardHeader className="bg-muted/30 border-b border-border">
+              <CardTitle>Content Editor</CardTitle>
+              <CardDescription>Write your content using your preferred format</CardDescription>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="mb-5">
+                <Label htmlFor="contentType" className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2 block">Content Type</Label>
+                <Select
+                  value={contentType}
+                  onValueChange={(value: 'html' | 'mdx') => {
+                    setContentType(value);
+                    setFormData(prev => ({ ...prev, contentType: value }));
+                  }}
+                >
+                  <SelectTrigger id="contentType" className="rounded-xl p-6 h-12 bg-background/50">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="html">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground">Rich Text Editor (Visual)</span>
+                        <span className="text-xs text-muted-foreground">Standard formatted blog post</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="mdx">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground">MDX Editor (Code)</span>
+                        <span className="text-xs text-muted-foreground">For interactive components and live demos</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {contentType === 'html' ? (
+                <div className="rounded-xl overflow-hidden border border-border">
+                  <Editor
+                    apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
+                    onInit={(evt, editor) => (editorRef.current = editor)}
+                    init={{
+                      height: 500,
+                      menubar: true,
+                      plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'codesample', 'help', 'wordcount'
+                      ],
+                      toolbar: 'undo redo | blocks | ' +
+                        'bold italic forecolor | alignleft aligncenter ' +
+                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                        'removeformat | image media link | codesample code | help',
+                      content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height: 1.6; color: #333; }',
+                      skin: "oxide",
+                      content_css: "default",
+                      images_upload_url: '/api/imagekit-auth',
+                      automatic_uploads: true,
+                      file_picker_types: 'file',
+                      file_picker_callback: (callback: (url: string, meta?: Record<string, any>) => void, value: string, meta: Record<string, any>) => {
+                        const input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        if (meta.filetype === 'image') input.setAttribute('accept', 'image/*');
+                        else if (meta.filetype === 'media') input.setAttribute('accept', 'video/mp4,image/gif');
+                        else input.setAttribute('accept', 'image/*,video/mp4,image/gif');
+
+                        input.onchange = async function () {
+                          const file = (this as HTMLInputElement).files?.[0];
+                          if (!file) return;
+                          const isVideo = file.type === 'video/mp4' || file.type === 'image/gif';
+                          const uploadUrl = isVideo ? '/api/upload-video' : '/api/imagekit-auth';
+
+                          try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            const response = await fetch(uploadUrl, { method: 'POST', body: formData });
+                            const data = await response.json();
+                            if (data.success || data.location) {
+                              callback(data.location || data.url, { alt: file.name, title: file.name });
+                            }
+                          } catch (error) {
+                            console.error('Upload error:', error);
+                          }
+                        };
+                        input.click();
+                      },
+                      codesample_languages: [
+                        { text: 'JavaScript', value: 'javascript' },
+                        { text: 'TypeScript', value: 'typescript' },
+                        { text: 'HTML/XML', value: 'markup' },
+                        { text: 'CSS', value: 'css' },
+                      ]
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <textarea
+                    value={formData.content}
+                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    className="w-full h-[500px] p-6 font-mono text-sm bg-background/50 border border-border rounded-xl focus:ring-2 focus:ring-primary/20 outline-none scroll-smooth"
+                    placeholder="# Start writing MDX..."
+                  />
+                  <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+                    <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                      <span className="block w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      MDX Components Ready
+                    </h4>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 text-xs font-mono text-muted-foreground">
+                      <span>&lt;ColorPicker /&gt;</span>
+                      <span>&lt;MarginDemo /&gt;</span>
+                      <span>&lt;PaddingVisualizer /&gt;</span>
+                      <span>&lt;FlexboxPlayground /&gt;</span>
+                      <span>&lt;GridGenerator /&gt;</span>
+                      <span>&lt;CSSAnimator /&gt;</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column: Settings (Sticky Sidebar) */}
+        <div className="lg:col-span-4 space-y-6 sticky top-28">
+          {/* Basic Information */}
+          <Card className="glass-card border-none shadow-sm ring-1 ring-border/50">
+            <CardHeader className="bg-muted/30 border-b border-border">
+              <CardTitle>Essential Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 p-5">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Title *</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="rounded-xl h-11 bg-background/50"
+                  placeholder="The future of design..."
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Slug *</Label>
+                <Input
+                  id="slug"
+                  name="slug"
+                  value={formData.slug}
+                  onChange={handleInputChange}
+                  className="rounded-xl h-11 bg-background/50 font-mono text-sm"
+                  placeholder="future-of-design"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Excerpt *</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="rounded-xl bg-background/50 min-h-[80px]"
+                  placeholder="Provide a short summary..."
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="categoryId" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category *</Label>
+                  <Select
+                    value={formData.categoryId}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}
+                  >
+                    <SelectTrigger className="rounded-xl h-11 bg-background/50">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      {categories.map((cat) => (
+                        <SelectItem key={cat._id} value={cat._id}>{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="author" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Author</Label>
+                  <Input
+                    id="author"
+                    name="author"
+                    value={formData.author}
+                    onChange={handleInputChange}
+                    className="rounded-xl h-11 bg-background/50"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="thumbnail" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Feature Image</Label>
+                <div className="relative group">
+                  <Input
+                    id="thumbnail"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailChange}
+                    className="rounded-xl h-11 bg-background/50 py-2 cursor-pointer"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 p-4 bg-accent/50 rounded-2xl border border-border">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-bold">Publish Instantly</Label>
+                    <p className="text-xs text-muted-foreground">Make it visible to everyone</p>
+                  </div>
+                  <Switch
+                    checked={formData.isPublished}
+                    onCheckedChange={(checked) => handleSwitchChange('isPublished', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-bold">Featured Story</Label>
+                    <p className="text-xs text-muted-foreground">Promote to homepage hero</p>
+                  </div>
+                  <Switch
+                    checked={formData.isFeatured}
+                    onCheckedChange={(checked) => handleSwitchChange('isFeatured', checked)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* SEO Sidebar Card */}
+          <Card className="glass-card border-none shadow-sm ring-1 ring-border/50">
+            <CardHeader className="bg-muted/30 border-b border-border">
+              <CardTitle className="text-base">Search Engine Optimization</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-4">
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Meta Title</Label>
+                <Input
+                  name="metaTitle"
+                  value={formData.metaTitle}
+                  onChange={handleInputChange}
+                  className="rounded-lg h-9 text-sm bg-background/30"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Meta Keywords</Label>
+                <Input
+                  name="metaKeywords"
+                  value={formData.metaKeywords}
+                  onChange={handleInputChange}
+                  className="rounded-lg h-9 text-sm bg-background/30"
+                  placeholder="design, dev, code"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex items-center gap-4 pt-2">
+            <Button variant="ghost" className="flex-1 rounded-xl h-12 text-muted-foreground hover:bg-muted">Draft Logs</Button>
+            <Button type="submit" disabled={loading} className="flex-1 rounded-xl h-12 bg-foreground text-background font-bold shadow-lg hover:opacity-90 transition-opacity">
+              Save Post
+            </Button>
+          </div>
         </div>
       </form>
     </div>
